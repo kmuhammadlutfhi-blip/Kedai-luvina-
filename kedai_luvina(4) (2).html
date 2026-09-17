@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kedai Luvina - Menu & Pesanan</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7f3ed;color:#29231f}
+header{background:linear-gradient(135deg,#7b3f22,#c97838);color:white;padding:28px 18px;text-align:center}
+header h1{margin:0;font-size:32px}header p{margin:8px 0 0}
+.container{max-width:1000px;margin:auto;padding:18px}
+.section-title{font-size:24px;margin:8px 0 15px}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{background:white;border-radius:16px;padding:16px;box-shadow:0 3px 12px #00000012;border:1px solid #eee}
+.card h3{margin:0 0 7px}.desc{font-size:13px;color:#777;min-height:32px}.price{font-weight:bold;font-size:18px;margin:10px 0;color:#8b431f}
+button{border:0;border-radius:10px;padding:11px 14px;cursor:pointer;font-weight:bold}
+.order-btn{width:100%;background:#8b431f;color:white}.order-btn:active{transform:scale(.98)}
+.cart{position:static;bottom:auto;background:white;border-radius:18px;padding:18px;margin-top:25px;box-shadow:0 5px 25px #0002}
+.cart h2{margin-top:0}.cart-item{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eee;padding:10px 0}
+.qty button{padding:5px 9px;background:#eee}.total{font-size:21px;font-weight:bold;margin:15px 0}
+input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;margin:6px 0 14px;font-size:16px}
+.pay{display:flex;gap:10px}.pay label{flex:1;border:1px solid #ddd;border-radius:10px;padding:12px;cursor:pointer}
+.pay input{width:auto;margin:0 5px 0 0}
+.checkout{width:100%;background:#198754;color:white;font-size:16px;margin-top:10px}
+#qris{display:none;text-align:center;background:#fafafa;border-radius:12px;padding:12px;margin-top:10px}
+.qrbox{width:170px;height:170px;margin:8px auto;border:8px solid white;box-shadow:0 1px 8px #0002}
+.note{font-size:12px;color:#777}
+.empty{color:#777;text-align:center;padding:10px}
+ .cart{position:static!important;bottom:auto!important;top:auto!important;z-index:auto!important;margin-top:30px!important}
+</style>
+</head>
+<body>
+<header><h1>🍽️ Kedai Luvina</h1><p>Menu lezat, pesan mudah, langsung dari HP</p></header>
+
+<div class="container">
+<h2 class="section-title">📋 Menu Kedai</h2>
+<div class="menu" id="menu"></div>
+
+<div class="cart">
+<h2>🛒 Keranjang Pesanan</h2>
+<div id="cartItems" class="empty">Belum ada pesanan.</div>
+<div class="total">Total: <span id="total">Rp0</span></div>
+
+<label><b>No Rumah</b></label>
+<input id="house" type="text" placeholder="Masukkan nomor rumah">
+
+<b>Metode Pembayaran</b>
+<div class="pay">
+<label><input type="radio" name="payment" value="QRIS" checked> QRIS</label>
+<label><input type="radio" name="payment" value="Cash"> Cash</label>
+</div>
+
+<div id="qris">
+<b>Scan QRIS untuk pembayaran</b>
+<div class="qrbox">
+<svg viewBox="0 0 100 100" width="154" height="154">
+<rect width="100" height="100" fill="white"/>
+<g fill="black">
+<rect x="5" y="5" width="25" height="25"/><rect x="10" y="10" width="15" height="15" fill="white"/><rect x="14" y="14" width="7" height="7"/>
+<rect x="70" y="5" width="25" height="25"/><rect x="75" y="10" width="15" height="15" fill="white"/><rect x="79" y="14" width="7" height="7"/>
+<rect x="5" y="70" width="25" height="25"/><rect x="10" y="75" width="15" height="15" fill="white"/><rect x="14" y="79" width="7" height="7"/>
+<rect x="38" y="7" width="7" height="7"/><rect x="50" y="7" width="7" height="7"/><rect x="34" y="20" width="12" height="6"/>
+<rect x="38" y="35" width="8" height="8"/><rect x="50" y="32" width="8" height="14"/><rect x="62" y="37" width="8" height="8"/>
+<rect x="34" y="50" width="10" height="7"/><rect x="47" y="50" width="7" height="14"/><rect x="58" y="50" width="14" height="7"/>
+<rect x="78" y="37" width="8" height="8"/><rect x="88" y="34" width="7" height="14"/>
+<rect x="35" y="68" width="8" height="8"/><rect x="48" y="70" width="13" height="7"/><rect x="65" y="66" width="8" height="12"/>
+<rect x="78" y="58" width="16" height="7"/><rect x="78" y="70" width="7" height="10"/><rect x="88" y="80" width="7" height="15"/>
+<rect x="35" y="83" width="7" height="12"/><rect x="48" y="84" width="17" height="7"/><rect x="68" y="85" width="8" height="10"/>
+</g></svg>
+</div>
+<p class="note">Contoh QR untuk tampilan website. Ganti dengan QRIS asli Kedai Luvina jika sudah tersedia.</p>
+</div>
+<button class="checkout" onclick="checkout()">✅ Konfirmasi Pesanan</button>
+</div>
+</div>
+
+<script>
+const menus=[
+["Gabin Eskrim","","10000"],["Maklor","","5000"],["Soteng","","11000"],["Seblak","Mulai harga","10000"],["Pisang Siram","","10000"],["Cigor","","10000"],["Bakmie","","11000"],
+["Pisang Aroma","","10000"],["Lumpia Ubi","","10000"],["Cheese Roll","","10000"],["Martabak Mini","","10000"],["Jasuke","","6000"],["Nangka Sticky Rice","","10000"],["Tansuke Matcha / Tiramisu","","10000"],
+["Sop Buah","","12000"],["Es Campur","","10000"],["Es Teler","","12000"],["Thai Tea","","8000"],["Green Tea","","8000"],["Nutrisari","","5000"],["Teajus","","2000"]
+];
+let cart={};
+const rupiah=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n);
+document.getElementById("menu").innerHTML=menus.map((m,i)=>`
+<div class="card"><h3>${m[0]}</h3><div class="desc">${m[1]}</div><div class="price">${rupiah(+m[2])}</div>
+<button class="order-btn" onclick="add(${i})">+ Pesan</button></div>`).join("");
+
+function add(i){cart[i]=(cart[i]||0)+1;render()}
+function change(i,d){cart[i]+=d;if(cart[i]<=0)delete cart[i];render()}
+function render(){
+ let keys=Object.keys(cart), box=document.getElementById("cartItems"),total=0;
+ if(!keys.length){box.className="empty";box.innerHTML="Belum ada pesanan."}
+ else{box.className="";box.innerHTML=keys.map(i=>{let m=menus[i],sub=+m[2]*cart[i];total+=sub;return `<div class="cart-item"><span><b>${m[0]}</b><br>${rupiah(+m[2])} × ${cart[i]}</span><span class="qty"><button onclick="change(${i},-1)">−</button> <button onclick="change(${i},1)">+</button></span></div>`}).join("")}
+ document.getElementById("total").textContent=rupiah(total);
+}
+document.querySelectorAll('input[name="payment"]').forEach(x=>x.onchange=()=>document.getElementById("qris").style.display=x.value==="QRIS"&&x.checked?"block":"none");
+function checkout(){
+ let keys=Object.keys(cart),house=document.getElementById("house").value.trim(),pay=document.querySelector('input[name="payment"]:checked').value;
+ if(!keys.length)return alert("Keranjang masih kosong. Silakan pilih menu terlebih dahulu.");
+ if(!house)return alert("Silakan isi No Rumah terlebih dahulu.");
+ let total=keys.reduce((s,i)=>s+(+menus[i][2]*cart[i]),0);
+ let text="Pesanan Kedai Luvina%0A%0A"+keys.map(i=>`• ${menus[i][0]} x${cart[i]}`).join("%0A")+`%0A%0ATotal: ${rupiah(total)}%0ANo Rumah: ${encodeURIComponent(house)}%0APembayaran: ${pay}`;
+ alert("Pesanan siap dikonfirmasi!\\n\\n"+decodeURIComponent(text.replaceAll("%0A","\\n")));
+}
+render();
+</script>
+</body>
+</html>
